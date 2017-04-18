@@ -17,7 +17,7 @@ smr.city_name,
             (case when smr.business_trip = 't' then '1' else 0 end)
                 end) as trip,
 
-(case  when to_char (smr.closed_at, 'YYYY') in ( '2016')  then '1' else 0 end) as seminar_closed,
+(case  when to_char (smr.closed_at, 'YYYY') in ( '2017')  then '1' else 0 end) as seminar_closed,
 
 (case when smr.partimer_id is not null then smr.partimer_full_name else
     (case when smr.technolog_id  is not null then smr.technolog_full_name else 
@@ -63,10 +63,13 @@ smr.city_name,
     from seminar_users as smu
     left join users as usr ON smu.user_id = usr.id
     where smr.id = smu.seminar_id) as count_usr_salons
+,
+to_char(smr.closed_at,'dd.mm.YYYY') as closed_date
+   
   
 from seminars as smr
 left join seminar_types as smt ON smr.seminar_type_id = smt.id
 left join salons as slnPlace ON smr.salon_id is not null and smr.salon_id = slnPlace.id
 left join studios as std ON smr.studio_id is not null and smr.studio_id = std.id
 
-where to_char(started_at,'YYYY')in ('2016')
+where to_char(started_at,'YYYY')in ('2017')
