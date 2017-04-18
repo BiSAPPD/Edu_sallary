@@ -72,4 +72,6 @@ left join seminar_types as smt ON smr.seminar_type_id = smt.id
 left join salons as slnPlace ON smr.salon_id is not null and smr.salon_id = slnPlace.id
 left join studios as std ON smr.studio_id is not null and smr.studio_id = std.id
 
+
 where to_char(started_at,'YYYY')in ('2017')
+
