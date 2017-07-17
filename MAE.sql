@@ -1,7 +1,7 @@
 WITH 
 programs as (
 	select *
-	from dblink('dbname=academie user=readonly password=', 
+	from dblink('dbname=academie user=readonly password=sdfm6234vsj', 
 		'select spcr.status as status, spc.id as id, spc.name as name, spc.brand_id as brand_id, 
 		(Case spc.brand_id
 				When 1 then ''loreal'' 
@@ -85,16 +85,17 @@ programs as (
 )
 , payments as (
 	select *
-	from dblink('dbname=academie user=readonly password=',
+	from dblink('dbname=academie user=readonly password=sdfm6234vsj',
 	'select distinct brand_id as brand_id, master_id as master_id, seminar_id as seminar_id, (Case when price is not null then 1 end) as ykassa
 	from payments') AS pmt (brand_id integer, master_id integer, seminar_id integer, ykassa integer)
 )
 
 , booking as (
-	select smrr.seminar_id, smrr.representative_id as booking_user_id, smrr.payed, smrr.master_id, to_char(smrr.created_at, 'DD.MM.YYYY') as booking_at, smrr.master_id,
+	select smrr.seminar_id, smrr.representative_id as booking_user_id, usr.lname || ' '  || usr.fname as booking_user_name, smrr.payed, smrr.master_id, usr2.lname || ' '  || usr2.fname as master_name, smrr.created_at as booking_at,
 	usr.role
 	from seminar_records as smrr
 	left join users as usr ON usr.id = smrr.representative_id
+	left join users as usr2 ON usr2.id = smrr.master_id
 )
 
 
@@ -227,7 +228,13 @@ pmt.ykassa as usr_used_ykassa,
 (Case when usr.salon_id is not null then sln.com_mreg else slnMNG.com_mreg end) as com_mreg,
 (Case when usr.salon_id is not null then sln.com_reg else slnMNG.com_reg end) as com_reg,
 (Case when usr.salon_id is not null then sln.com_sect else slnMNG.com_sect end) as com_sect,
-(Case when usr.salon_id is not null then sln.client_type else slnMNG.client_type end) as client_type
+(Case when usr.salon_id is not null then sln.client_type else slnMNG.client_type end) as client_type,
+bkg.booking_user_name, bkg.role,
+date_part('day', smr.started_at::timestamp  - bkg.booking_at::timestamp ) as prebooking_day,
+(Case when date_part('day', smr.started_at::timestamp  - bkg.booking_at::timestamp ) = 0 then 'on_seminar' else
+	(Case when date_part('day', smr.started_at::timestamp  - bkg.booking_at::timestamp ) < 0 then 'after_seminar' else
+		(Case when date_part('day', smr.started_at::timestamp  - bkg.booking_at::timestamp ) > 0 then 'pre_booking' 
+		else '' end)end)end) as status_booking
 
 from seminars as smr
 left join seminar_users as SMU ON smr.id = smu.seminar_id
@@ -239,11 +246,9 @@ left join salons as slnMNG ON usr.salon_id is null and usr.id = slnMNG.salon_man
 left join studios as std ON smr.studio_id is not null and smr.studio_id = std.id
 left join program_salons as spp ON (Case when usr.salon_id is not null then usr.salon_id else slnMNG.id end) = spp.salon_id 
 left join payments as pmt ON smr.id = pmt.seminar_id and usr.id = pmt.master_id
+left join booking as bkg ON smr.id = bkg.seminar_id and bkg.master_id = smu.user_id
 
 where smr.started_at >= '2017-02-01' and smr.started_at < '2017-06-01' 
 
-
---GROUP BY smr.id,smt.kpis_type, smt.name, slnplace.name, slnplace.address, std.name, std.address , smu.user_id, usr.full_name
 Order by smr.id,  smu.id 
 
---limit 1000
