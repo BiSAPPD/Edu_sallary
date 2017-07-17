@@ -73,7 +73,13 @@ left join salons as slnPlace ON smr.salon_id is not null and smr.salon_id = slnP
 left join studios as std ON smr.studio_id is not null and smr.studio_id = std.id
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 where smr.started_at >= '2016-09-01' and smr.started_at < '2016-10-01'
 =======
 where to_char(started_at,'YYYY')in ('2017')
 >>>>>>> d775f10d12f6dcbdfe4e733079e493842cacdae9
+=======
+
+where to_char(started_at,'YYYY')in ('2017')
+
+>>>>>>> 26990c567b75cbe23595418dbf29540d6e4057d3
