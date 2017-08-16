@@ -126,3 +126,4 @@ left join payments_usr as pmt_prt on prt.id = pmt_prt.item_id
 where to_char(sme.started_at::timestamp at time zone 'UTC','YYYY') in ('2017') and  to_char(sme.started_at::timestamp at time zone 'UTC','MM') in ('07') and brn."name" is not null and brn.pretty_name = 'Matrix' 
 and  inte.n1_full_name is not null and inte.n3_full_name is not null
 order by sme.started_at, sme.id, prt.id
+---end

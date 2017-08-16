@@ -1,4 +1,3 @@
-
 with internal as (
 select rgn.id as region_id, rgn.name as region_name, rgn.brand_id, rgn.region_level, rgn.structure_type, rgn.is_blocked, rgn.code as region_code, rgn.status as region_status, rgn.education_region_id,
 usr.id as user_id, usr.last_name || ' ' || usr.first_name as full_name,  usr.email, usr.mobile_number, usr.city
@@ -53,11 +52,13 @@ to_char(sme.started_at::timestamp at time zone 'UTC','MM')as Month,
 to_char(sme.started_at::timestamp at time zone 'UTC','YYYY') as Year ,
 to_char(sme.started_at::timestamp at time zone 'UTC','dd.mm.YYYY') as FullDate,
 smr.duration,
+smr.id as seminartypeid,
+concat(smr.loreal_former_id, smr.matrix_former_id,  smr.kerastase_former_id, smr.redken_former_id) as seminartypeidold,
 smr."name",
 rgn_edu.name as region,
 (case when sme.business_trip is true then 1 else 0 end)  as trip,
-(case  when sme.is_closed  then '1' else 0 end) as seminar_closed,
-edu.first_name || ' ' || edu.last_name as educator_name,
+(case  when sme.performed_at is not null  then '1' else 0 end) as seminar_closed,
+edu.last_name || ' ' || edu.first_name as educator_name,
 (case  when sme.participants_count = '0' then 0 else 1 end) as Users_Count,
 (case when sme.studio_id is not null then  trc."name" || ' ' || trc.address
 	else 'in_salon: ' || sln.salon_name  end) as name_place,
@@ -79,5 +80,5 @@ left join seminar_event_types as smret on sme.seminar_event_type_id = smret.id
 left join participations_count as prt on sme.id = prt.seminar_event_id
 left join regions as rgn_edu on sme.region_id =rgn_edu.id
 left join internal_hrr as inte on sme.educator_id = inte.user_id
-where to_char(sme.started_at,'YYYY') in ('2017') and brn."name" is not null -- and sme.educator_id = 18887 and sme.id = 41824
+where to_char(sme.started_at,'YYYY') in ('2017') and brn."name" is not null  -- and sme.educator_id = 18887 and sme.id = 41824
 order by sme.started_at
