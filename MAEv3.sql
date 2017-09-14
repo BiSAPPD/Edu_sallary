@@ -130,10 +130,10 @@ from seminar_events as sme
 	left join seminars as smr on sme.seminar_id = smr.id
 	left join seminar_kpis_types as smrkt on smr.seminar_kpis_type_id = smrkt.id
 	left join training_centers as trc on sme.studio_id = trc.id
+	left join seminar_event_types as smret on sme.seminar_event_type_id = smret.id 
 	left join brands as brn on smr.brand_id = brn.id
 	left join salons_rgn as sln on sme.salon_id = sln.id and brn."name" = sln.brand
 	left join users as edu on sme.educator_id = edu.id
-	left join seminar_event_types as smret on sme.seminar_event_type_id = smret.id 
 	left join participations as prt on sme.id = prt.seminar_event_id
 	left join users as prtnm on prt.user_id = prtnm.id
 	left join users_salons as usr_sln on prtnm.id = usr_sln.user_id
@@ -143,9 +143,11 @@ from seminar_events as sme
 	left join payments_usr as pmt_prt on prt.id = pmt_prt.item_id
 where 
 	to_char(sme.started_at::timestamp at time zone 'UTC','YYYY') in ('2017') and  
-	to_char(sme.started_at::timestamp at time zone 'UTC','MM') in ('07') and 
+	--to_char(sme.started_at::timestamp at time zone 'UTC','MM') in ('07') and 
 	brn."name" is not null and 
-	brn.pretty_name = 'Matrix' 
-and  inte.n1_full_name is not null and inte.n3_full_name is not null and sme.studio_id is null
+	brn.pretty_name = 'Matrix' and 
+  	--inte.n1_full_name is not null and 
+	--inte.n3_full_name is not null and 
+	sme.studio_id is null
 order by sme.started_at, sme.id, prt.id
 ---end
