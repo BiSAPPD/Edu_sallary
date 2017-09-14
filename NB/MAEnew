@@ -123,6 +123,7 @@ select
 	dsc.percent_value as discount,
 	'' as salon_id,
 	'' as salon,
+	sln.com_mreg_name, sln.com_reg_name, sln.com_ter_name,
 	sln.com_ter_name, sln.com_reg_name, sln.com_mreg_name, sln.salon_type,
 	sln.edu_reg_name, sln.edu_mreg_name,
 	'' as booking_user_name, '' as role, '' as prebooking_day, '' as status_booking
